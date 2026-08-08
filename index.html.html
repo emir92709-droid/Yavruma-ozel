@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Azra'ya — Kavuşma Oyunu ❤️</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:linear-gradient(135deg,#160d24,#3b164d,#8b315f);color:white;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{width:min(680px,100%);background:rgba(20,10,30,.78);border:1px solid rgba(255,255,255,.16);border-radius:28px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.35);backdrop-filter:blur(10px)}
+h1,h2{text-align:center;margin-top:0}
+h1{font-size:clamp(30px,8vw,52px)}
+p{line-height:1.6;color:#f5eaf5}
+button{width:100%;border:0;border-radius:16px;padding:15px;margin-top:10px;background:#ff5f9e;color:white;font-size:16px;font-weight:700;cursor:pointer;transition:.2s}
+button:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.option{background:#ffffff12;border:1px solid #ffffff1c;text-align:left}
+input{width:100%;padding:15px;border-radius:14px;border:1px solid #ffffff30;background:#ffffff12;color:white;font-size:17px;outline:none}
+.center{text-align:center}.heart{font-size:64px;animation:pulse 1.5s infinite}@keyframes pulse{50%{transform:scale(1.12)}}
+.progress{height:8px;background:#ffffff18;border-radius:99px;overflow:hidden;margin:15px 0 25px}
+.bar{height:100%;background:#ff5f9e;width:0%;transition:.4s}
+.hidden{display:none}.note{padding:18px;border-radius:18px;background:#ffffff0d;border-left:4px solid #ff5f9e;margin:15px 0}
+.small{font-size:13px;opacity:.7;text-align:center}.shake{animation:shake .35s}@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+</style>
+</head>
+<body>
+<div class="card">
+  <section id="start">
+    <div class="center heart">❤️</div>
+    <h1>Azra'ya Özel</h1>
+    <p class="center">Bu oyun sadece bir oyun değil. Her bulmacanın sonunda sana söylemek istediğim küçük bir şey var.</p>
+    <button onclick="startGame()">Oyuna Başla</button>
+    <p class="small">Hazırsan, sonuna kadar gel. Çünkü finalde bir buluşmamız var...</p>
+  </section>
+
+  <section id="game" class="hidden">
+    <div class="progress"><div class="bar" id="bar"></div></div>
+    <div id="content"></div>
+  </section>
+
+  <section id="end" class="hidden center">
+    <div class="heart">💗</div>
+    <h1>Sonunda...</h1>
+    <p>Azra, bütün bulmacaları çözdün.</p>
+    <div class="note">
+      <strong>Asıl sürpriz:</strong><br><br>
+      Bunca sorunun tek bir doğru cevabı vardı: <b>sen.</b><br><br>
+      Ne kadar uzak olursak olalım, ne kadar zorlanırsak zorlanalım,
+      ben sonunda yine sana gelmek istiyorum.
+    </div>
+    <h2>❤️ KAVUŞTUK ❤️</h2>
+    <p>Bu oyunun sonu burada olabilir ama bizim hikâyemizin güzel bölümleri daha yeni başlıyor.</p>
+    <button onclick="location.reload()">Tekrar Oyna</button>
+  </section>
+</div>
+
+<script>
+const levels = [
+  {
+    q:"İlk kapının şifresi: Beni en çok mutlu eden kişi kim?",
+    options:["Azra","Kimse","Şans"],
+    correct:0,
+    msg:"Doğru. ❤️ Bazen tek bir ismin insanın yüzünü güldürmesi yeter."
+  },
+  {
+    q:"İkinci kapı: Aşağıdaki kelimelerden hangisi bu oyunun gizli anahtarı?",
+    options:["Unutmak","Kavuşmak","Vazgeçmek"],
+    correct:1,
+    msg:"Kavuşmak... Çünkü bu oyunun amacı başından beri buydu."
+  },
+  {
+    q:"Üçüncü kapı: Bir ilişkiyi güçlü yapan en önemli şeylerden biri hangisi?",
+    options:["İnatlaşmak","Birbirini dinlemek ve emek vermek","Hiç konuşmamak"],
+    correct:1,
+    msg:"Aynen öyle. ❤️ Sevgi sadece söz değil; emek, anlayış ve çaba da ister."
+  },
+  {
+    q:"Son kapı: Şifreyi tamamlamak için boşluğu doldur: “Azra, seni ... görmek istiyorum.”",
+    options:["Bir daha hiç","Mutlu","Asla"],
+    correct:1,
+    msg:"Şifre tamamlandı! Şimdi son kapıyı açma zamanı..."
+  }
+];
+
+let level=0;
+
+function startGame(){
+ document.getElementById("start").classList.add("hidden");
+ document.getElementById("game").classList.remove("hidden");
+ showLevel();
+}
+function showLevel(){
+ const l=levels[level];
+ document.getElementById("bar").style.width=((level)/levels.length*100)+"%";
+ document.getElementById("content").innerHTML=`
+   <h2>${l.q}</h2>
+   <p class="center">Doğru cevabı seç ve bir sonraki kapıyı aç. 🔐</p>
+   ${l.options.map((x,i)=>`<button class="option" onclick="answer(${i})">${x}</button>`).join("")}
+   <p id="feedback" class="center"></p>`;
+}
+function answer(i){
+ const l=levels[level], f=document.getElementById("feedback");
+ if(i!==l.correct){
+   f.textContent="Bu kapı açılmadı... Bir daha dene. ❤️";
+   f.style.color="#ff9fbe";
+   document.querySelector(".card").classList.add("shake");
+   setTimeout(()=>document.querySelector(".card").classList.remove("shake"),350);
+   return;
+ }
+ f.textContent=l.msg;
+ f.style.color="#ffd1e2";
+ document.querySelectorAll(".option").forEach(b=>b.disabled=true);
+ setTimeout(()=>{
+   level++;
+   if(level>=levels.length){
+     document.getElementById("game").classList.add("hidden");
+     document.getElementById("end").classList.remove("hidden");
+   }else showLevel();
+ },1200);
+}
+</script>
+</body>
+</html>
